@@ -71,6 +71,10 @@ func main() {
 		log.Printf(" [x] Congrats, sending message: %s", body)
 	})
 
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("Hello World"))
+	})
+
 	log.Println("Starting HTTP server on port 8080")
 	http.ListenAndServe(":8080", nil)
 
