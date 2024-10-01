@@ -17,7 +17,7 @@ func failOnError(err error, msg string) {
 func main() {
 	rabbitMQURL := os.Getenv("RABBITMQ_URL")
 	if rabbitMQURL == "" {
-		rabbitMQURL = "amqp://guest:guest@localhost:5672/"
+		rabbitMQURL = "amqp://guest:guest@rabbitmq:5672/"
 	}
 
 	conn, err := amqp.Dial(rabbitMQURL)
