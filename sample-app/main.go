@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"net/http"
 	"os"
 
 	"github.com/streadway/amqp"
@@ -53,4 +54,24 @@ func main() {
 	// If there is an error publishing the message, a log will be displayed in the terminal.
 	failOnError(err, "Failed to publish a message")
 	log.Printf(" [x] Congrats, sending message: %s", body)
+
+	// start webserver that listens for requests on port 8080 and publishes messages to the queue
+	http.HandleFunc("/publish", func(w http.ResponseWriter, r *http.Request) {
+		body := "HTTP request received"
+		err = ch.Publish(
+			"",     // exchange
+			q.Name, // routing key
+			false,  // mandatory
+			false,  // immediate
+			amqp.Publishing{
+				ContentType: "text/plain",
+				Body:        []byte(body),
+			})
+		failOnError(err, "Failed to publish a message")
+		log.Printf(" [x] Congrats, sending message: %s", body)
+	})
+
+	log.Println("Starting HTTP server on port 8080")
+	http.ListenAndServe(":8080", nil)
+
 }
